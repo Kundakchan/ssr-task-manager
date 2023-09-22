@@ -2,11 +2,13 @@
 import eslintPlugin from 'vite-plugin-eslint'
 export default defineNuxtConfig({
   devtools: { enabled: true },
+
   vite: {
     plugins: [
       eslintPlugin()
     ]
   },
+
   runtimeConfig: {
     FIREBASE_CONNECTION: {
       apiKey: process.env.FIREBASE_API_KEY
@@ -16,5 +18,7 @@ export default defineNuxtConfig({
         apiKey: process.env.FIREBASE_API_KEY
       }
     }
-  }
+  },
+
+  modules: ["@nuxtjs/tailwindcss"]
 })
