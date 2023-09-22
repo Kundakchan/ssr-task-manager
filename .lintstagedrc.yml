@@ -1,0 +1,2 @@
+"*.{ts,js.vue}":
+  - yarn lint:fix

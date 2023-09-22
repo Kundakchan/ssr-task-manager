@@ -1,0 +1,19 @@
+root: true
+env:
+  browser: true
+  node: true
+  es2024: true
+parser: vue-eslint-parser
+parserOptions:
+  ecmaVersion: latest
+  parser: '@typescript-eslint/parser'
+  sourceType: module
+extends:
+  - plugin:@typescript-eslint/recommended
+  - plugin:nuxt/recommended
+  - plugin:vue/vue3-recommended
+plugins:
+  - '@typescript-eslint'
+  - vitest
+rules:
+  vue/multi-word-component-names: off

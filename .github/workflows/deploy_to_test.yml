@@ -1,0 +1,33 @@
+name: 'Deploy to test'
+on: [workflow_dispatch]
+env:
+  BUILD: .output
+  DEPLOY_PATH: ./ssr-todo-manager
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --prefer-offline
+      - name: Creating .env
+        run: |
+          json_data='${{ toJSON(vars) }}'
+          env_data=$(echo "$json_data" | jq -r 'to_entries | map("\(.key)=\(.value|tostring)") | .[]')
+          echo "$env_data" > .env
+      - name: Build application
+        run: yarn build
+      - name: deploy to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEPLOY_SERVER_HOST }}
+          port: ${{ secrets.DEPLOY_SERVER_PORT  }}
+          username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+          key: ${{ secrets.DEPLOY_SERVER_KEY }}
+          source: ${{ env.BUILD }}
+          target: ${{ env.DEPLOY_PATH }}
+          strip_components: 1
