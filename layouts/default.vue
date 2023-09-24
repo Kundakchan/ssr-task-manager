@@ -1,5 +1,6 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div><slot /></div>
+  <header />
+  <main><slot /></main>
 </template>
