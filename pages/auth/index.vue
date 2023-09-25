@@ -29,7 +29,9 @@ definePageMeta({
     </InputBase>
 
     <div class="flex justify-between gap-2 items-end flex-wrap">
-      <ButtonBase>Авторизоваться</ButtonBase>
+      <ButtonBase :type="'primary'">
+        Авторизоваться
+      </ButtonBase>
       <LinkBase :to="{ name: 'auth-signIn' }">
         Регистрация
       </LinkBase>

@@ -2,7 +2,11 @@
 export default {
   content: [],
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateRows: {
+        layout: 'auto 1fr'
+      }
+    },
   },
   plugins: [],
 }

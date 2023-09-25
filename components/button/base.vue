@@ -1,8 +1,42 @@
 <script lang="ts" setup>
 
+interface Props {
+  type?: 'default' | 'primary'
+  shape?: 'default' | 'circle'
+}
+const props = withDefaults(defineProps<Props>(), {
+  type: 'default',
+  shape: 'default'
+})
+
+const emit = defineEmits<{
+  (e: 'click', value: MouseEvent ): void
+}>()
+
+const clickHander = ($event: MouseEvent) => {
+  emit('click', $event)
+}
+
+const classMapType = {
+  default: 'text-gray-700 border border-gray-700 hover:text-blue-500 hover:border-blue-600 active:text-blue-900 active:border-blue-900 focus:text-blue-500 focus:border-blue-600',
+  primary: 'text-white bg-blue-500 hover:bg-blue-400 active:bg-blue-600 focus:bg-blue-400'
+}
+
+const classMapShape = {
+  default: 'py-2 px-4',
+  circle: 'rounded-full p-2'
+}
 </script>
 <template>
-  <button class="py-2 px-4 text-white bg-blue-500 font-medium">
+  <button
+    class="font-medium flex focus:outline-none transition-colors duration-200"
+    :class="[
+      classMapShape[props.shape],
+      classMapType[props.type]
+    ]"
+    @click="clickHander($event)"
+  >
+    <slot name="icon" />
     <slot />
   </button>
 </template>
