@@ -20,9 +20,9 @@ const props = withDefaults(defineProps<Props>(), {
     <ButtonBase
       type="primary"
     >
-      Создать
+      Поиск
       <template #icon>
-        <IconDocumentPlus class="mr-2" />
+        <IconSearch class="mr-2" />
       </template>
     </ButtonBase>
   </div>
