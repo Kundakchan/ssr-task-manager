@@ -7,11 +7,14 @@
         <span class="text-red-600">Todo</span> manager
       </h1>
     </div>
-    <div class="w-full mt-4 sm:mt-6">
-      <InputCreate placeholder="Наименования задачи" />
+    <div class="w-full mt-4 sm:mt-6 flex justify-center">
+      <InputCreate
+        class="max-w-screen-lg"
+        placeholder="Наименования задачи"
+      />
     </div>
     <div class="w-full mt-4 sm:mt-6">
-      <TaskViev />
+      <TaskView />
     </div>
   </section>
 </template>
