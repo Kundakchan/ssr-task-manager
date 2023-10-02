@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NuxtError } from 'nuxt/app';
+import type { NuxtError } from 'nuxt/app'
 import Error404 from '@/components/error/404.vue'
 import Error403 from '@/components/error/403.vue'
 import Error500 from '@/components/error/500.vue'

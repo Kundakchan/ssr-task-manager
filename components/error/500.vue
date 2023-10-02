@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NuxtError } from 'nuxt/app';
+import type { NuxtError } from 'nuxt/app'
 defineProps<{ error: NuxtError }>()
 </script>
 
