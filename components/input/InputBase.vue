@@ -1,14 +1,26 @@
 <script lang="ts" setup>
+
 defineOptions({
   inheritAttrs: false
 })
 interface Props {
   id?: string
+  modelValue?: string
 }
-
 const props = withDefaults(defineProps<Props>(), {
-  id: ''
+  id: '',
+  modelValue: ''
 })
+
+interface Emit {
+  (e: 'update:modelValue', value: string ): void
+}
+const emit = defineEmits<Emit>()
+
+const inputHandler = ($event: Event) => {
+  const input = $event.target as HTMLInputElement
+  emit('update:modelValue', input.value)
+}
 
 </script>
 
@@ -21,7 +33,9 @@ const props = withDefaults(defineProps<Props>(), {
     <input
       v-bind="$attrs"
       :id="props.id"
+      :value="modelValue"
       class="input"
+      @input="inputHandler"
     >
   </div>
 </template>

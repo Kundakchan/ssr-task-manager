@@ -14,7 +14,8 @@ const navMenu = [
   },
   {
     label: 'Выйти',
-    handler: () => {
+    handler: async () => {
+      await logOut()
       dropdownVisibility.value = false
       navigateTo({ name: 'auth' })
     }

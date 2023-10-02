@@ -61,7 +61,7 @@ const loadingTable = ref(true)
 onMounted(() => {
   setTimeout(() => {
     loadingTable.value = false
-  }, 300);
+  }, 300)
 })
 </script>
 

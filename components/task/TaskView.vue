@@ -86,7 +86,7 @@ interface DataSource {
 
 let dataSource = ref<DataSource[]>([])
 
-for (let index = 0; index < 25; index++) {
+for (let index = 0; index < 5; index++) {
   dataSource.value.push({
     id: index.toString(),
     created: '01.12.1995',
@@ -102,7 +102,7 @@ const loadingTable = ref(true)
 onMounted(() => {
   setTimeout(() => {
     loadingTable.value = false
-  }, 300);
+  }, 300)
 })
 
 
