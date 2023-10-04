@@ -5,11 +5,13 @@ defineOptions({
 })
 interface Props {
   id?: string
-  modelValue?: string
+  modelValue?: string,
+  htmlTag?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   id: '',
-  modelValue: ''
+  modelValue: '',
+  htmlTag: 'input'
 })
 
 interface Emit {
@@ -30,13 +32,14 @@ const inputHandler = ($event: Event) => {
       v-if="props.id"
       :for="props.id"
     ><slot name="label" /></label>
-    <input
+    <component
+      :is="props.htmlTag"
       v-bind="$attrs"
       :id="props.id"
       :value="modelValue"
       class="input"
       @input="inputHandler"
-    >
+    />
   </div>
 </template>
 
