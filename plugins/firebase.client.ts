@@ -1,7 +1,9 @@
 import { initializeApp } from "firebase/app"
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
-  initializeApp(config.public.FIREBASE_CONNECTION)
+  const firebase = initializeApp(config.public.FIREBASE_CONNECTION)
   initFirebase()
+  nuxtApp.vueApp.provide('firebase', firebase)
+  nuxtApp.provide('firebase', firebase)
 })

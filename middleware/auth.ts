@@ -1,4 +1,6 @@
+import type { User } from "firebase/auth"
+
 export default defineNuxtRouteMiddleware(() => {
-  const accessToken = useCookie("accessToken").value
-  if (!accessToken) return navigateTo({ name: "auth" })
+  const cookieUser = useCookie<User | null>('cookieUser')
+  if (!cookieUser.value) return navigateTo({ name: "auth" })
 })

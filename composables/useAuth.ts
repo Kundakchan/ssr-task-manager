@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, getIdToken } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import type { LogIn, Registration } from '~/types/auth'
 
 export const logIn = async ({ email, password }: LogIn) => {
@@ -30,14 +30,11 @@ export const logOut = async () => {
 }
 export const initFirebase = async () => {
   const auth = getAuth()
+
+  const cookieUser = useCookie('cookieUser')
   onAuthStateChanged(auth, async (user) => {
+    cookieUser.value = user ? JSON.stringify(user) : null
     const firebaseUser = useFirebaseUser()
     firebaseUser.value = user
-    if (user) {
-      const accessToken = await getIdToken(user)
-      useCookie(`accessToken`).value = accessToken
-    } else {
-      useCookie("accessToken", { maxAge: -1 }).value = ""
-    }
   })
 }
