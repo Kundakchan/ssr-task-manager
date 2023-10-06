@@ -5,10 +5,13 @@ interface Items {
 }
 interface Props {
   items: Items[]
-  modelValue: string
+  modelValue?: string
   id?: string
 }
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  id: ''
+})
 
 interface Emits {
   (e: 'update:modelValue', value: string ): void

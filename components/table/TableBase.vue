@@ -76,7 +76,7 @@ const styleCol = (column: TableColumn) => {
       name="loading"
     />
     <slot
-      v-if="!props.dataSource.length"
+      v-if="!props.dataSource.length && !props.loading"
       name="empty"
     />
     <slot name="footer" />
