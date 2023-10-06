@@ -1,4 +1,8 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+definePageMeta({
+  middleware: "auth"
+})
+</script>
 
 <template>
   <section class="px-6 sm:py-6">
@@ -10,7 +14,6 @@
     <div class="w-full mt-4 sm:mt-6 flex justify-center">
       <InputCreate
         class="max-w-screen-lg"
-        placeholder="Наименования задачи"
       />
     </div>
     <div class="w-full mt-4 sm:mt-6">

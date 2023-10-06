@@ -1,5 +1,10 @@
 <script lang="ts" setup>
+import { taskRemove } from '~/composables/useTasks'
 import type { TableColumn } from '../table/Table'
+
+import dayjs from 'dayjs'
+import ru from 'dayjs/locale/ru'
+dayjs.locale(ru)
 
 const tabs = [
   {
@@ -40,7 +45,7 @@ const tabs = [
 ]
 
 interface Column extends TableColumn {
-  type: 'text' | 'action' | 'tag'
+  type: 'text' | 'action' | 'tag' | 'date'
 }
 
 const columns: Column[] = [
@@ -48,13 +53,13 @@ const columns: Column[] = [
     id: 'created',
     label: 'Дата создания',
     width: 180,
-    type: 'text'
+    type: 'date'
   },
   {
     id: 'updated',
     label: 'Дата обновления',
     width: 180,
-    type: 'text'
+    type: 'date'
   },
   {
     id: 'name',
@@ -76,35 +81,44 @@ const columns: Column[] = [
   }
 ]
 
-interface DataSource {
-  id: string,
-  created: string,
-  updated: string,
-  name: string,
-  status: string
+const { list, loading, attributes } = toRefs(useTask().value)
+
+const removeHander = (id: string) => {
+  taskRemove(id)
 }
 
-let dataSource = ref<DataSource[]>([])
-
-for (let index = 0; index < 25; index++) {
-  dataSource.value.push({
-    id: index.toString(),
-    created: '01.12.1995',
-    updated: '01.12.1995',
-    name: `Тестовая задача - ${index}`,
-    status: 'Новая'
-  })
+const statusLabel = (status: string) => {
+  return attributes.value.statusLabel[status]
 }
 
-const loadingTable = ref(true)
+const dateFormat = (date: string) => {
+  if (!date) return 'Нет данных'
+  return dayjs(date).format('D MMMM YYYY')
+}
 
-
-onMounted(() => {
-  setTimeout(() => {
-    loadingTable.value = false
-  }, 300);
+onMounted(async () => {
+  await tasksGet()
 })
 
+const modal = ref(false)
+const source = ref({
+  id: '',
+  name: '',
+  description: '',
+  status: 'new',
+  
+})
+const editHandler = async (id: string) => {
+  const data = await taskGet(id)
+  if (!data) return
+  source.value = {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    status: data.status
+  }
+  modal.value = true
+}
 
 </script>
 
@@ -119,8 +133,8 @@ onMounted(() => {
     <div class="mt-2">
       <TableBase
         :columns="columns"
-        :data-source="dataSource"
-        :loading="loadingTable"
+        :data-source="list"
+        :loading="loading"
         :class-table="'w-full'"
         :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
         :class-rows="'border-b'"
@@ -135,12 +149,14 @@ onMounted(() => {
               <ButtonBase
                 :shape="'circle'"
                 :type="'primary'"
+                @click="editHandler(record.id as string)"
               >
                 <IconPencil />
               </ButtonBase>
               <ButtonBase
                 :shape="'circle'"
                 :type="'danger'"
+                @click="removeHander(record.id as string)"
               >
                 <IconTrash />
               </ButtonBase>
@@ -148,8 +164,19 @@ onMounted(() => {
           </template>
           <template v-else-if="column.type === 'tag'">
             <div class="px-4">
-              <span class=" text-sm bg-blue-600 text-white py-1 px-2 rounded shadow-lg">{{ record[field.id] }}</span>
+              <span 
+                :class="{
+                  'bg-blue-600': record[field.id] === 'new',
+                  'bg-green-600':record[field.id] === 'proccesing',
+                  'bg-purple-600': record[field.id] === 'succsess',
+                  'bg-red-600': record[field.id] === 'cancel'
+                }"
+                class="text-sm  text-white py-1 px-2 rounded shadow-lg whitespace-nowrap"
+              >{{ statusLabel(record[field.id] as string) }}</span>
             </div>
+          </template>
+          <template v-else-if="column.type === 'date'">
+            <span class="px-4">{{ dateFormat(record[field.id] as string) }}</span>
           </template>
           <template v-else>
             <span class="px-4">{{ record[field.id] }}</span>
@@ -199,5 +226,14 @@ onMounted(() => {
         </template>
       </TableBase>
     </div>
+    <ClientOnly>
+      <Teleport to="#space-modal">
+        <ModalTaskEdit
+          v-model:visibility="modal"
+          :mode="'edit'"
+          :record="source"
+        />
+      </Teleport>
+    </ClientOnly>
   </div>
 </template>

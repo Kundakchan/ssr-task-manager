@@ -3,16 +3,28 @@
 definePageMeta({
   layout: 'auth'
 })
+
+const email = ref('')
+const password = ref('')
+
+const submit = async () => {
+  await logIn({ email: email.value, password: password.value })
+  navigateTo({ name: 'index' })
+}
 </script>
 
 <template>
-  <form class="bg-white p-6 grid gap-6">
+  <form
+    class="bg-white p-6 grid gap-6"
+    @submit.prevent="submit"
+  >
     <legend class="text-2xl">
       Авторизация
     </legend>
 
     <InputBase
       id="email"
+      v-model="email"
       type="email"
     >
       <template #label>
@@ -21,6 +33,7 @@ definePageMeta({
     </InputBase>
     <InputBase
       id="password"
+      v-model="password"
       type="password"
     >
       <template #label>

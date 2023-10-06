@@ -2,11 +2,13 @@
 interface Props {
   visibility?: boolean,
   placement?: 'left' | 'right'
+  overlayFull?: boolean 
 }
 
 const props = withDefaults(defineProps<Props>(), {
   visibility: false,
-  placement: 'right'
+  placement: 'right',
+  overlayFull: false
 })
 
 const emit = defineEmits<{
@@ -42,7 +44,8 @@ const classMapPlacement = {
       class="absolute transition duration-100 origin-top-right"
       :class="[
         classMapPlacement[props.placement],
-        { 'opacity-100 scale-100': props.visibility, 'opacity-0 scale-0': !props.visibility }
+        { 'opacity-100 scale-100': props.visibility, 'opacity-0 scale-0': !props.visibility },
+        { 'w-full': props.overlayFull }
       ]"
     >
       <slot name="overlay" />
