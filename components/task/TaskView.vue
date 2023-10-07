@@ -6,43 +6,36 @@ import dayjs from 'dayjs'
 import ru from 'dayjs/locale/ru'
 dayjs.locale(ru)
 
+const route = useRoute()
+
 const tabs = [
   {
     key: 'all',
-    label: 'Все',
-    handler: () => {
-      console.log('all')
-    }
+    label: 'Все'
   },
   {
     key: 'new',
-    label: 'Новые',
-    handler: () => {
-      console.log('new')
-    }
+    label: 'Новые'
   },
   {
     key: 'processing',
-    label: 'В процессе',
-    handler: () => {
-      console.log('processing')
-    }
+    label: 'В процессе'
   },
   {
     key: 'sucsess',
-    label: 'Выполнин',
-    handler: () => {
-      console.log('sucsess')
-    }
+    label: 'Выполнин'
   },
   {
     key: 'cancel',
-    label: 'Отменён',
-    handler: () => {
-      console.log('cancel')
-    }
+    label: 'Отменён'
   }
 ]
+
+const tabsHander = (key: string) => {
+  if (!route.name) return
+  navigateTo({ name: route.name, query: { ...route.query, status: key } })
+}
+const tabsActibeIndex = computed(() => useTask().value.filters.status)
 
 interface Column extends TableColumn {
   type: 'text' | 'action' | 'tag' | 'date'
@@ -96,6 +89,11 @@ const dateFormat = (date: string) => {
   return dayjs(date).format('D MMMM YYYY')
 }
 
+const paginationHander = (key: string) => {
+  if (!route.name) return
+  navigateTo({ name: route.name, query: { ...route.query, pageNo: key } })
+}
+
 onMounted(async () => {
   await tasksGet()
 })
@@ -127,7 +125,8 @@ const editHandler = async (id: string) => {
     <div class="px-4 pt-2">
       <TabsBase
         :tabs="tabs"
-        :active="'new'"
+        :active="tabsActibeIndex"
+        @click="tabsHander"
       />
     </div>
     <div class="mt-2">
@@ -213,10 +212,16 @@ const editHandler = async (id: string) => {
             <ButtonBase :type="'primary'">
               Prev
             </ButtonBase>
-            <ButtonBase :type="'primary'">
+            <ButtonBase
+              :type="'primary'"
+              @click="paginationHander('1')"
+            >
               1
             </ButtonBase>
-            <ButtonBase :type="'primary'">
+            <ButtonBase
+              :type="'primary'"
+              @click="paginationHander('2')"
+            >
               2
             </ButtonBase>
             <ButtonBase :type="'primary'">

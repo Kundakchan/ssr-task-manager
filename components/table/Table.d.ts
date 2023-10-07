@@ -6,9 +6,14 @@ export interface TableColumn {
   width?: number
 }
 
+export interface SourceItem {
+  [key: string]: SourceItem | SourceItem[] | string | number | null
+}
+
+
 export interface TableProps {
   columns: Column[],
-  dataSource: Record<string, unknown>[]
+  dataSource: DataSourceItem[]
   loading?: boolean,
   classWrapper?: string,
   classTable?: string,

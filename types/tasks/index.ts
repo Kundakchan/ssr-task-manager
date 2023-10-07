@@ -23,8 +23,13 @@ export interface Attributes {
   statusLabel: Record<string, string>
 }
 
+export type FiltersFields = 'sortBy' | 'pageNo' | 'status'
+
+export interface Filters extends Partial<Record<FiltersFields, string>> {}
+
 export interface TaskStorage {
   list: TaskListItemStorage[]
   loading: boolean,
   attributes: Attributes
+  filters: Filters
 }

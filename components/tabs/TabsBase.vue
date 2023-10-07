@@ -13,6 +13,11 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   active: ''
 })
+
+interface Emits {
+  (e: 'click', value: string): void
+}
+const emit = defineEmits<Emits>()
 </script>
 
 <template>
@@ -24,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
       :class="[
         { 'text-blue-700 border-blue-700': props.active === tab.key }
       ]"
-      @click="tab.handler"
+      @click="[tab.handler, emit('click', tab.key)]"
     >
       {{ tab.label }}
     </button>

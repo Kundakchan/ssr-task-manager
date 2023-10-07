@@ -1,7 +1,7 @@
 import { getFirestore, addDoc, collection, query, getDocs, deleteDoc, doc, updateDoc, getDoc } from "firebase/firestore"
 import dayjs from 'dayjs'
 
-import type { TaskParams, TaskParamsUpdate, TaskListItemStorage } from "~/types/tasks"
+import type { TaskParams, TaskParamsUpdate, TaskListItemStorage, Filters } from "~/types/tasks"
 import type { FirebaseApp } from "firebase/app"
 import type { DocumentData } from "firebase/firestore"
 
@@ -102,8 +102,12 @@ export const taskRemove = async (id: string) => {
     throw error
   }
 }
-
 export const taskLoadingSet = (value: boolean) => {
   const { loading } = toRefs(useTask().value)
   loading.value = value
+}
+
+export const taskSetFilters = (filtersParams: Filters) => {
+  const { filters } = toRefs(useTask().value)
+  filters.value = { ...filters.value, ...filtersParams }
 }
