@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 interface Tab {
-  key: string,
+  value: string,
   label: string,
   handler?: () => void
 }
@@ -13,18 +13,23 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   active: ''
 })
+
+interface Emits {
+  (e: 'click', value: string): void
+}
+const emit = defineEmits<Emits>()
 </script>
 
 <template>
   <div class="flex gap-4">
     <button
       v-for="(tab) in props.tabs"
-      :key="tab.key"
+      :key="tab.value"
       class="tab"
       :class="[
-        { 'text-blue-700 border-blue-700': props.active === tab.key }
+        { 'text-blue-700 border-blue-700': props.active === tab.value }
       ]"
-      @click="tab.handler"
+      @click="[tab.handler, emit('click', tab.value)]"
     >
       {{ tab.label }}
     </button>

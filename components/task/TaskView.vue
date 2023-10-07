@@ -1,48 +1,23 @@
 <script lang="ts" setup>
 import { taskRemove } from '~/composables/useTasks'
 import type { TableColumn } from '../table/Table'
+import type { TaskStatus } from '~/types/tasks'
+import type { Source } from '../modal/ModalTaskEdit'
 
 import dayjs from 'dayjs'
 import ru from 'dayjs/locale/ru'
 dayjs.locale(ru)
 
-const tabs = [
-  {
-    key: 'all',
-    label: 'Все',
-    handler: () => {
-      console.log('all')
-    }
-  },
-  {
-    key: 'new',
-    label: 'Новые',
-    handler: () => {
-      console.log('new')
-    }
-  },
-  {
-    key: 'processing',
-    label: 'В процессе',
-    handler: () => {
-      console.log('processing')
-    }
-  },
-  {
-    key: 'sucsess',
-    label: 'Выполнин',
-    handler: () => {
-      console.log('sucsess')
-    }
-  },
-  {
-    key: 'cancel',
-    label: 'Отменён',
-    handler: () => {
-      console.log('cancel')
-    }
-  }
-]
+const route = useRoute()
+
+const tabs = computed(() => [ { value: 'all', label: 'Все' }, ...useTask().value.attributes.statuses])
+
+const tabsHander = async (key: string) => {
+  if (!route.name) return
+  await navigateTo({ name: route.name, query: { ...route.query, status: key } })
+  await tasksGet()
+}
+const tabsActibeIndex = computed(() => useTask().value.filters.status)
 
 interface Column extends TableColumn {
   type: 'text' | 'action' | 'tag' | 'date'
@@ -87,8 +62,8 @@ const removeHander = (id: string) => {
   taskRemove(id)
 }
 
-const statusLabel = (status: string) => {
-  return attributes.value.statusLabel[status]
+const getStatusLabel = (status: TaskStatus) => {
+  return attributes.value.statuses.find(item => item.value === status)?.label
 }
 
 const dateFormat = (date: string) => {
@@ -96,18 +71,26 @@ const dateFormat = (date: string) => {
   return dayjs(date).format('D MMMM YYYY')
 }
 
+const paginationHander = (key: string) => {
+  if (!route.name) return
+  navigateTo({ name: route.name, query: { ...route.query, pageNo: key } })
+}
+
 onMounted(async () => {
   await tasksGet()
 })
 
+const skeletonRows = computed(() => list.value.length || 10)
+
 const modal = ref(false)
-const source = ref({
+const source = ref<Source>({
   id: '',
   name: '',
   description: '',
   status: 'new',
   
 })
+
 const editHandler = async (id: string) => {
   const data = await taskGet(id)
   if (!data) return
@@ -127,7 +110,8 @@ const editHandler = async (id: string) => {
     <div class="px-4 pt-2">
       <TabsBase
         :tabs="tabs"
-        :active="'new'"
+        :active="tabsActibeIndex"
+        @click="tabsHander"
       />
     </div>
     <div class="mt-2">
@@ -167,12 +151,12 @@ const editHandler = async (id: string) => {
               <span 
                 :class="{
                   'bg-blue-600': record[field.id] === 'new',
-                  'bg-green-600':record[field.id] === 'proccesing',
-                  'bg-purple-600': record[field.id] === 'succsess',
+                  'bg-green-600':record[field.id] === 'processing',
+                  'bg-purple-600': record[field.id] === 'success',
                   'bg-red-600': record[field.id] === 'cancel'
                 }"
                 class="text-sm  text-white py-1 px-2 rounded shadow-lg whitespace-nowrap"
-              >{{ statusLabel(record[field.id] as string) }}</span>
+              >{{ getStatusLabel(record[field.id]) }}</span>
             </div>
           </template>
           <template v-else-if="column.type === 'date'">
@@ -187,7 +171,7 @@ const editHandler = async (id: string) => {
           <table class="w-full">
             <tbody>
               <tr 
-                v-for="index in 10"
+                v-for="index in skeletonRows"
                 :key="index"
                 class="border-b"
               >
@@ -213,10 +197,16 @@ const editHandler = async (id: string) => {
             <ButtonBase :type="'primary'">
               Prev
             </ButtonBase>
-            <ButtonBase :type="'primary'">
+            <ButtonBase
+              :type="'primary'"
+              @click="paginationHander('1')"
+            >
               1
             </ButtonBase>
-            <ButtonBase :type="'primary'">
+            <ButtonBase
+              :type="'primary'"
+              @click="paginationHander('2')"
+            >
               2
             </ButtonBase>
             <ButtonBase :type="'primary'">
@@ -231,7 +221,7 @@ const editHandler = async (id: string) => {
         <ModalTaskEdit
           v-model:visibility="modal"
           :mode="'edit'"
-          :record="source"
+          :source="source"
         />
       </Teleport>
     </ClientOnly>
