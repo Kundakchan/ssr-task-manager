@@ -1,9 +1,10 @@
-import { getFirestore, addDoc, collection, query, getDocs, deleteDoc, doc, updateDoc, getDoc } from "firebase/firestore"
+import { getFirestore, addDoc, collection, query, where, limit, orderBy, getDocs, deleteDoc, doc, updateDoc, getDoc } from "firebase/firestore"
 import dayjs from 'dayjs'
 
 import type { TaskParams, TaskParamsUpdate, TaskListItemStorage, Filters } from "~/types/tasks"
 import type { FirebaseApp } from "firebase/app"
 import type { DocumentData } from "firebase/firestore"
+import type { User } from 'firebase/auth'
 
 export const taskGet= async (id: string) : Promise<DocumentData | null> => {
   const firebase = useNuxtApp().$firebase as FirebaseApp
@@ -17,14 +18,21 @@ export const taskGet= async (id: string) : Promise<DocumentData | null> => {
   }
 }
 export const tasksGet = async () => {
-  const { list } = toRefs(useTask().value)
   taskLoadingSet(true)
 
   const firebase = useNuxtApp().$firebase as FirebaseApp
   const db = getFirestore(firebase)
 
+  const { list, filters } = toRefs(useTask().value)
+  const cookieUser = useCookie<User>('cookieUser')
+
   try {
-    const q = query(collection(db, 'tasks'))
+    const q = query(
+      collection(db, 'tasks'),
+      limit(25), orderBy("created", "desc"),
+      where('status', '==', filters.value.status),
+      where('userId', '==', cookieUser.value.uid)
+    )
     const docs = await getDocs(q)
     list.value = []
     docs.forEach((doc) => {
@@ -47,6 +55,8 @@ export const taskCreating = async ({ name, description, status }: TaskParams) =>
   const firebase = useNuxtApp().$firebase as FirebaseApp
   const db = getFirestore(firebase)
   const { list } = toRefs(useTask().value)
+  const user = useFirebaseUser().value
+  if (!user) return
 
   try {
     const data = {
@@ -55,6 +65,7 @@ export const taskCreating = async ({ name, description, status }: TaskParams) =>
       description: description,
       created: dayjs().format(),
       updated: null,
+      userId: user.uid
     }
     const result = await addDoc(collection(db, "tasks"), data)
     list.value.push({ ...data, id: result.id, created: data.created })

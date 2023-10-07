@@ -1,3 +1,7 @@
+export type TaskStatus = 'new' | 'processing' | 'success' | 'cancel'
+export type FiltersFields = 'sortBy' | 'pageNo' | 'status'
+
+
 export interface TaskParams {
   name: string,
   description: string,
@@ -13,17 +17,12 @@ export interface TaskListItemStorage extends Omit<TaskParamsUpdate, 'description
   updated: string | null
 }
 
-
-
 export interface Attributes {
   statuses: {
-    value: string
+    value: TaskStatus
     label: string
   }[]
-  statusLabel: Record<string, string>
 }
-
-export type FiltersFields = 'sortBy' | 'pageNo' | 'status'
 
 export interface Filters extends Partial<Record<FiltersFields, string>> {}
 

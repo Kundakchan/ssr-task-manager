@@ -15,16 +15,10 @@ export const useTask = () => useState<TaskStorage>('taskStorage', () => {
     attributes: {
       statuses: [
         { value: 'new', label: 'Новый' },
-        { value: 'proccesing', label: 'В процессе' },
-        { value: 'succsess', label: 'Выполнин' },
+        { value: 'processing', label: 'В процессе' },
+        { value: 'success', label: 'Выполнин' },
         { value: 'cancel', label: 'Отменён' }
-      ],
-      statusLabel: {
-        new: 'Новый',
-        proccesing: 'В процессе',
-        succsess: 'Выполнин',
-        cancel: 'Отменён'
-      }
+      ]
     }
   }
 })
