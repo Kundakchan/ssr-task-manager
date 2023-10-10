@@ -15,7 +15,7 @@ import dayjs from 'dayjs'
 
 import type { TaskParams, TaskParamsUpdate, TaskListItemStorage, Filters } from "~/types/tasks"
 import type { FirebaseApp } from "firebase/app"
-import type { DocumentData } from "firebase/firestore"
+import type { DocumentData, OrderByDirection } from "firebase/firestore"
 import type { User } from 'firebase/auth'
 
 export const taskGet = async (id: string) : Promise<DocumentData | null> => {
@@ -39,13 +39,17 @@ export const tasksGet = async () => {
   const { list, filters } = toRefs(useTask().value)
   const cookieUser = useCookie<User>('cookieUser')
   const statuses = useTask().value.attributes.statuses.map(item => item.value)
+  const sorting = filters.value.sortBy?.split(':')
+
+  if (!sorting) return
+  const [field, method] = sorting
 
   try {
     const q = query(
       collection(db, 'tasks'),
       where('userId', '==', cookieUser.value.uid),
       where('status', filters.value.status === 'all' ? 'in': '==', filters.value.status === 'all' ? statuses : filters.value.status),
-      orderBy("created")
+      orderBy(field, method as OrderByDirection)
     )
 
     const docs = await getDocs(q)

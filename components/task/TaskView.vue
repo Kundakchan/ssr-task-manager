@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { taskRemove } from '~/composables/useTasks'
-import type { TableColumn } from '../table/Table'
+import type { TableColumn, SortingSelect } from '../table/Table'
 import type { TaskStatus } from '~/types/tasks'
 import type { Source } from '../modal/ModalTaskEdit'
 
@@ -28,25 +28,29 @@ const columns: Column[] = [
     id: 'created',
     label: 'Дата создания',
     width: 180,
-    type: 'date'
+    type: 'date',
+    sorting: true
   },
   {
     id: 'updated',
     label: 'Дата обновления',
-    width: 180,
-    type: 'date'
+    width: 203,
+    type: 'date',
+    sorting: true
   },
   {
     id: 'name',
     label: 'Названия',
     minWidth: 200,
-    type: 'text'
+    type: 'text',
+    sorting: true
   },
   {
     id: 'status',
     label: 'Статус',
     width: 100,
-    type: 'tag'
+    type: 'tag',
+    sorting: true
   },
   {
     id: 'actions',
@@ -98,6 +102,12 @@ const editHandler = async (id: string) => {
   modal.value = true
 }
 
+const sortingHander = async ({ field, method }: SortingSelect) => {
+  if (!route.name) return
+  await navigateTo({ name: route.name, query: { ...route.query, sortBy: [field, method].join(':') } })
+  await tasksGet()
+}
+
 </script>
 
 <template>
@@ -117,6 +127,7 @@ const editHandler = async (id: string) => {
         :class-table="'w-full'"
         :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
         :class-rows="'border-b'"
+        @sorting-select="sortingHander"
       >
         <template
           v-for="(column) in columns"

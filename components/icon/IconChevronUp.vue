@@ -5,7 +5,7 @@
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    class="w-4 h-4"
+    class="icon"
   >
     <path
       stroke-linecap="round"
@@ -14,3 +14,15 @@
     />
   </svg>
 </template>
+
+<style scoped>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .icon {
+    @apply w-4 h-4;
+  }
+}
+</style>
