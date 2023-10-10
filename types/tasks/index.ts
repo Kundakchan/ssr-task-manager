@@ -1,5 +1,5 @@
 export type TaskStatus = 'new' | 'processing' | 'success' | 'cancel'
-export type FiltersFields = 'sortBy' | 'pageNo' | 'status'
+export type FiltersFields = 'sortBy' | 'status'
 
 
 export interface TaskParams {

@@ -9,7 +9,6 @@ export const useTask = () => useState<TaskStorage>('taskStorage', () => {
     loading: true,
     filters: {
       sortBy: 'created',
-      pageNo: '1',
       status: 'all'
     },
     attributes: {
