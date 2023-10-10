@@ -8,7 +8,7 @@ export const useTask = () => useState<TaskStorage>('taskStorage', () => {
     list: [],
     loading: true,
     filters: {
-      sortBy: 'created',
+      sortBy: 'created:asc',
       status: 'all'
     },
     attributes: {
