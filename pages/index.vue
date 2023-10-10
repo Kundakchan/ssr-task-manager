@@ -9,7 +9,7 @@ definePageMeta({
 
 watchEffect(() => {
   const route = useRoute()
-  const fields: FiltersFields[] = ['sortBy', 'pageNo', 'status']
+  const fields: FiltersFields[] = ['sortBy', 'status']
   const query: Filters = {}
   fields.forEach(field => {
     if (route.query.hasOwnProperty(field)) {

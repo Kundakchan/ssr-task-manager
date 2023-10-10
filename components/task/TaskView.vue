@@ -71,11 +71,6 @@ const dateFormat = (date: string) => {
   return dayjs(date).format('D MMMM YYYY')
 }
 
-const paginationHander = (key: string) => {
-  if (!route.name) return
-  navigateTo({ name: route.name, query: { ...route.query, pageNo: key } })
-}
-
 onMounted(async () => {
   await tasksGet()
 })
@@ -190,28 +185,6 @@ const editHandler = async (id: string) => {
         <template #empty>
           <div class=" w-full h-32 flex justify-center items-center">
             <span class=" text-lg text-gray-400">Нет данных</span>
-          </div>
-        </template>
-        <template #footer>
-          <div class="w-full flex justify-center px-4 py-6">
-            <ButtonBase :type="'primary'">
-              Prev
-            </ButtonBase>
-            <ButtonBase
-              :type="'primary'"
-              @click="paginationHander('1')"
-            >
-              1
-            </ButtonBase>
-            <ButtonBase
-              :type="'primary'"
-              @click="paginationHander('2')"
-            >
-              2
-            </ButtonBase>
-            <ButtonBase :type="'primary'">
-              Next
-            </ButtonBase>
           </div>
         </template>
       </TableBase>
