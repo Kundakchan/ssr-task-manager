@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "dayjs": "^1.11.10",
-    "firebase": "^10.4.0"
+    "firebase": "^10.4.0",
+    "vue-toastification": "^2.0.0-rc.5"
   }
 }
