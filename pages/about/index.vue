@@ -1,6 +1,3 @@
-<script lang="ts" setup>
-</script>
-
 <template>
   <section class="px-6 sm:py-6">
     <div class="w-full pt-8 pl-8 lg:pl-16">

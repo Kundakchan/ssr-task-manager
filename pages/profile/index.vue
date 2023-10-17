@@ -63,7 +63,7 @@ const submit = async ({ password }: { password: string }) => {
           type="password"
         >
           <template #label>
-            Пароль
+            Новый пароль
           </template>
         </InputBase>
         <span class=" text-gray-800 font-bold">Роль: Пользователь</span>
