@@ -3,30 +3,17 @@ import type { LogIn, Registration } from '~/types/auth'
 
 export const logIn = async ({ email, password }: LogIn) => {
   const auth = getAuth()
-  try {
-    await signInWithEmailAndPassword(auth, email, password)
-  } catch (error) {
-    throw error
-  }
+  await signInWithEmailAndPassword(auth, email, password)
 }
 export const registration = async ({ userName, email, password }: Registration) => {
   const auth = getAuth()
-  try {
-    await createUserWithEmailAndPassword(auth, email, password)
-    if (auth?.currentUser) {
-      await updateProfile(auth.currentUser, { displayName: userName })
-    }
-  } catch (error) {
-    throw error
-  }
+  await createUserWithEmailAndPassword(auth, email, password)
+  if (!auth?.currentUser) throw createError('Данные пользователя отсутствуют')
+  await updateProfile(auth.currentUser, { displayName: userName })
 }
 export const logOut = async () => {
   const auth = getAuth()
-  try {
-    signOut(auth)
-  } catch (error) {
-    throw error
-  }
+  signOut(auth)
 }
 export const initFirebase = async () => {
   const auth = getAuth()

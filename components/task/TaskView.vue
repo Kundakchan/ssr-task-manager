@@ -12,12 +12,12 @@ const route = useRoute()
 
 const tabs = computed(() => [ { value: 'all', label: 'Все' }, ...useTask().value.attributes.statuses])
 
-const tabsHander = async (key: string) => {
+const tabsHandler = async (key: string) => {
   if (!route.name) return
   await navigateTo({ name: route.name, query: { ...route.query, status: key } })
   await tasksGet()
 }
-const tabsActibeIndex = computed(() => useTask().value.filters.status)
+const tabsActiveIndex = computed(() => useTask().value.filters.status)
 
 interface Column extends TableColumn {
   type: 'text' | 'action' | 'tag' | 'date'
@@ -62,7 +62,7 @@ const columns: Column[] = [
 
 const { list, loading, attributes } = toRefs(useTask().value)
 
-const removeHander = (id: string) => {
+const removeHandler = (id: string) => {
   taskRemove(id)
 }
 
@@ -102,7 +102,7 @@ const editHandler = async (id: string) => {
   modal.value = true
 }
 
-const sortingHander = async ({ field, method }: SortingSelect) => {
+const sortingHandler = async ({ field, method }: SortingSelect) => {
   if (!route.name) return
   await navigateTo({ name: route.name, query: { ...route.query, sortBy: [field, method].join(':') } })
   await tasksGet()
@@ -115,8 +115,8 @@ const sortingHander = async ({ field, method }: SortingSelect) => {
     <div class="px-4 pt-2">
       <TabsBase
         :tabs="tabs"
-        :active="tabsActibeIndex"
-        @click="tabsHander"
+        :active="tabsActiveIndex"
+        @click="tabsHandler"
       />
     </div>
     <div class="mt-2">
@@ -127,7 +127,7 @@ const sortingHander = async ({ field, method }: SortingSelect) => {
         :class-table="'w-full'"
         :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
         :class-rows="'border-b'"
-        @sorting-select="sortingHander"
+        @sorting-select="sortingHandler"
       >
         <template
           v-for="(column) in columns"
@@ -146,7 +146,7 @@ const sortingHander = async ({ field, method }: SortingSelect) => {
               <ButtonBase
                 :shape="'circle'"
                 :type="'danger'"
-                @click="removeHander(record.id as string)"
+                @click="removeHandler(record.id as string)"
               >
                 <IconTrash />
               </ButtonBase>

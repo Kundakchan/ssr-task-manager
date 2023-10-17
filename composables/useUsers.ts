@@ -4,8 +4,11 @@ import {
   updatePassword,
   reauthenticateWithCredential,
   EmailAuthProvider
- } from 'firebase/auth'
+} from 'firebase/auth'
 import type { ProfileUpdate } from '~/types/users'
+
+import { useToast } from "vue-toastification"
+const { success } = useToast()
 
 
 export const userGet = async () => {
@@ -23,7 +26,7 @@ export const usersGet = async () => {
 
 export const logInAgain = async (password: string) => {
   const user = useFirebaseUser().value
-  if (!user?.email) return
+  if (!user?.email) throw createError('Данные пользователя отсутствуют')
 
   const credential = EmailAuthProvider.credential(
     user.email,
@@ -34,28 +37,22 @@ export const logInAgain = async (password: string) => {
 }
 
 export const profileUpdate = async ({ displayName, email, password, oldPassword }: ProfileUpdate) => {
+  const UserCredential = await logInAgain(oldPassword)
+  const user = UserCredential?.user
+  if (!user) throw createError('Данные пользователя отсутствуют')
 
-  try {
-    const UserCredential = await logInAgain(oldPassword)
-    const user = UserCredential?.user
-    if (!user) return
+  if (displayName !== user?.displayName) {
+    await updateProfile(user, { displayName })
+    success('Имя пользователя обновлено')
+  }
 
-    if (displayName !== user?.displayName) {
-      await updateProfile(user, { displayName })
-      console.log('Имя пользователя обновлено')
-    }
+  if (email !== user?.email) {
+    await updateEmail(user, email)
+    success('Почта обновлена')
+  }
 
-    if (email !== user?.email) {
-      await updateEmail(user, email)
-      console.log('Почта обновлена')
-    }
-  
-    if (password) {
-      await updatePassword(user, password)
-      console.log('Пароль обновлён')
-    }
-
-  } catch (error) {
-    console.error(error)
+  if (password) {
+    await updatePassword(user, password)
+    success('Пароль обновлён')
   }
 }
