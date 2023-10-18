@@ -19,11 +19,11 @@ const submit = () => {
 <template>
   <ModalBase
     :visibility="visibility"
-    :title="'Повторно авторизозацыя'"
-    :applay-title="'Подтвердить'"
+    :title="'Повторно авторизуйтесь'"
+    :apply-title="'Подтвердить'"
     @close="close"
     @cancel="close"
-    @applay="submit"
+    @apply="submit"
   >
     <div class="p-6">
       <InputBase

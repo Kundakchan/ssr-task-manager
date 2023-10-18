@@ -107,26 +107,39 @@ const sortingHandler = async ({ field, method }: SortingSelect) => {
   await navigateTo({ name: route.name, query: { ...route.query, sortBy: [field, method].join(':') } })
   await tasksGet()
 }
-
+const { isDesktop } = useDevice()
 </script>
 
 <template>
-  <div class="shadow-lg">
-    <div class="px-4 pt-2">
+  <div class="md:shadow-lg">
+    <div class="md:px-4 pt-2">
       <TabsBase
+        v-if="isDesktop"
         :tabs="tabs"
         :active="tabsActiveIndex"
         @click="tabsHandler"
       />
+      <InputSelect
+        v-else
+        v-model="tabsActiveIndex"
+        :mode="'select'"
+        :items="tabs"
+        @select="tabsHandler"
+      />
     </div>
-    <div class="mt-2">
+    <div class="mt-2"> 
       <TableBase
+        class=""
         :columns="columns"
         :data-source="list"
         :loading="loading"
         :class-table="'w-full'"
+        :class-header="'hidden md:table-header-group'"
         :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
-        :class-rows="'border-b'"
+        :class-rows="'md:border-b md:table-row md:shadow-none md:rounded-none md:py-0 py-6 grid gap-2 border rounded-lg shadow-lg'"
+        :class-colgroup="'md:table-column-group hidden'"
+        :class-body="'md:table-row-group grid sm:grid-cols-2 gap-4'"
+        :class-cell="'md:table-cell grid'"
         @sorting-select="sortingHandler"
       >
         <template
@@ -135,7 +148,7 @@ const sortingHandler = async ({ field, method }: SortingSelect) => {
           :key="`span-${column.id}`"
         >
           <template v-if="column.type === 'action'">
-            <div class="py-1 px-4 flex gap-2">
+            <div class="py-1 px-4 flex gap-2 justify-end">
               <ButtonBase
                 :shape="'circle'"
                 :type="'primary'"
@@ -153,6 +166,7 @@ const sortingHandler = async ({ field, method }: SortingSelect) => {
             </div>
           </template>
           <template v-else-if="column.type === 'tag'">
+            <span class="md:hidden px-4 text-gray-400 text-sm">{{ column.label }}</span>
             <div class="px-4">
               <span 
                 :class="{
@@ -166,9 +180,11 @@ const sortingHandler = async ({ field, method }: SortingSelect) => {
             </div>
           </template>
           <template v-else-if="column.type === 'date'">
+            <span class="md:hidden px-4 text-gray-400 text-sm">{{ column.label }}</span>
             <span class="px-4">{{ dateFormat(record[field.id] as string) }}</span>
           </template>
           <template v-else>
+            <span class="md:hidden px-4 text-gray-400 text-sm">{{ column.label }}</span>
             <span class="px-4">{{ record[field.id] }}</span>
           </template>
         </template>

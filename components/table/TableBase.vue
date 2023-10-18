@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<TableProps>(), {
   classCol: '',
   classHeaderRows: '',
   classHeaderCell: '',
+  classColgroup: ''
 })
 
 const emit = defineEmits<Emits>()
@@ -24,7 +25,7 @@ const styleCol = (column: TableColumn) => {
   }
 }
 
-const sortingHander = ({ field, method }: SortingSelect) => {
+const sortingHandler = ({ field, method }: SortingSelect) => {
   emit('sorting-select', { field: field, method: method })
 }
 
@@ -33,7 +34,7 @@ const sortingHander = ({ field, method }: SortingSelect) => {
 <template>
   <div :class="props.classWrapper">
     <table :class="props.classTable">
-      <colgroup>
+      <colgroup :class="props.classColgroup">
         <col
           v-for="(column) in props.columns"
           :key="column.id"
@@ -44,25 +45,25 @@ const sortingHander = ({ field, method }: SortingSelect) => {
       <thead :class="props.classHeader">
         <tr :class="props.classHeaderRows">
           <th
-            v-for="(collumn) in props.columns"
-            :key="collumn.id"
+            v-for="(column) in props.columns"
+            :key="column.id"
             :class="props.classHeaderCell"
           >
             <div class="w-full flex gap-2 items-center justify-start">
-              <span>{{ collumn.label }}</span>
+              <span>{{ column.label }}</span>
               <div
-                v-if="collumn.sorting"
+                v-if="column.sorting"
                 class="flex flex-col shadow-lg"
               >
                 <button
-                  class="h-4 w-6 border flex justify-center items-cente text-gray-800 hover:text-gray-500 active:text-gray-900"
-                  @click="sortingHander({ field: collumn.id, method: 'asc' })"
+                  class="h-4 w-6 border flex justify-center items-center text-gray-800 hover:text-gray-500 active:text-gray-900"
+                  @click="sortingHandler({ field: column.id, method: 'asc' })"
                 >
                   <IconChevronUp class="w-3 h-3" />
                 </button>
                 <button
                   class="h-4 w-6 border flex justify-center items-center text-gray-800 hover:text-gray-500 active:text-gray-900"
-                  @click="sortingHander({ field: collumn.id, method: 'desc' })"
+                  @click="sortingHandler({ field: column.id, method: 'desc' })"
                 >
                   <IconChevronUp class="rotate-180 w-3 h-3" />
                 </button>

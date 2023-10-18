@@ -38,17 +38,19 @@ const submit = () => {
   close()
 }
 
+const title = computed(() => props.mode === 'created' ? 'Создания задачи' : 'Редактирования задачи')
+
 
 </script>
 
 <template>
   <ModalBase
     :visibility="visibility"
-    :title="'Создания задачи'"
-    :applay-title="'Создать'"
+    :title="title"
+    :apply-title="'Создать'"
     @close="close"
     @cancel="close"
-    @applay="submit"
+    @apply="submit"
   >
     <form
       class="flex flex-wrap items-end p-3"
