@@ -1,9 +1,10 @@
 <script lang="ts" setup>
+import { enableBodyScroll, disableBodyScroll } from 'body-scroll-lock'
 interface Props {
   visibility?: boolean
   title?: string
   cancelTitle?: string
-  applayTitle?: string
+  applyTitle?: string
 
 
 }
@@ -11,15 +12,23 @@ const props = withDefaults(defineProps<Props>(), {
   visibility: false,
   title: 'Заголовок модального окна',
   cancelTitle: 'Отмена',
-  applayTitle: 'Применить'
+  applyTitle: 'Применить'
 })
 
 interface Emits {
   (e: 'close', value: void): void
   (e: 'cancel', value: void): void
-  (e: 'applay', value: void): void
+  (e: 'apply', value: void): void
 }
 const emit = defineEmits<Emits>()
+
+watch(() => props.visibility, (value) => {
+  if (value) {
+    disableBodyScroll(document.body)
+  } else {
+    enableBodyScroll(document.body)
+  }
+})
 
 </script>
 
@@ -59,9 +68,9 @@ const emit = defineEmits<Emits>()
           </ButtonBase>
           <ButtonBase
             type="primary"
-            @click="emit('applay')"
+            @click="emit('apply')"
           >
-            {{ props.applayTitle }}
+            {{ props.applyTitle }}
           </ButtonBase>
         </div>
       </slot>

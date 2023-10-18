@@ -7,24 +7,31 @@ interface Props {
   items: Items[]
   modelValue?: string
   id?: string
+  mode?: 'select' | 'model'
 }
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
-  id: ''
+  id: '',
+  mode: 'model'
 })
 
 interface Emits {
   (e: 'update:modelValue', value: string ): void
+  (e: 'select', value: string): void
 }
 const emit = defineEmits<Emits>()
 
 const dropdownVisibility = ref(false)
-const dropdownTogleHander = () => {
+const dropdownToggleHandler = () => {
   dropdownVisibility.value = !dropdownVisibility.value
 }
 const choose = (value: string) => {
-  emit('update:modelValue', value)
-  dropdownTogleHander()
+  if (props.mode === 'model') {
+    emit('update:modelValue', value)
+  } else if (props.mode === 'select') {
+    emit('select', value)
+  }
+  dropdownToggleHandler()
 }
 
 const selectedLabel = computed(() => props.items.find(item => item.value === props.modelValue)?.label)
@@ -41,8 +48,8 @@ const selectedLabel = computed(() => props.items.find(item => item.value === pro
     <DropdownBase
       :visibility="dropdownVisibility"
       overlay-full
-      @click-toggler="dropdownTogleHander"
-      @mouse-leave-dropdown="dropdownTogleHander"
+      @click-toggler="dropdownToggleHandler"
+      @mouse-leave-dropdown="dropdownToggleHandler"
     >
       <button
         :id="props.id"

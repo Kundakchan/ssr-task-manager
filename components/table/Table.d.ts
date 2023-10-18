@@ -12,18 +12,19 @@ export interface SourceItem {
 }
 
 export interface TableProps {
-  columns: Column[],
+  columns: Column[]
   dataSource: DataSourceItem[]
-  loading?: boolean,
-  classWrapper?: string,
-  classTable?: string,
-  classHeader?: string,
-  classHeaderRows?: string,
-  classHeaderCell?: string,
-  classBody?: string,
-  classRows?: string,
-  classCell?: string,
+  loading?: boolean
+  classWrapper?: string
+  classTable?: string
+  classHeader?: string
+  classHeaderRows?: string
+  classHeaderCell?: string
+  classBody?: string
+  classRows?: string
+  classCell?: string
   classCol?: string
+  classColgroup?: string
 }
 
 export interface SortingSelect {
