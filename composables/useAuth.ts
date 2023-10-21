@@ -10,6 +10,7 @@ export const registration = async ({ userName, email, password }: Registration) 
   await createUserWithEmailAndPassword(auth, email, password)
   if (!auth?.currentUser) throw createError('Данные пользователя отсутствуют')
   await updateProfile(auth.currentUser, { displayName: userName })
+  await setUserRole(auth.currentUser.uid, 'user')
 }
 export const logOut = async () => {
   const auth = getAuth()

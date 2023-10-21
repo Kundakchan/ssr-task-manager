@@ -1,5 +1,6 @@
 import type { User } from "firebase/auth"
 import type { TaskStorage } from "~/types/tasks"
+import type { UsersStorage } from "~/types/users"
 export const useFirebaseUser = () =>
   useState<User | null>("userFirebase", () => null)
 
@@ -19,5 +20,12 @@ export const useTask = () => useState<TaskStorage>('taskStorage', () => {
         { value: 'cancel', label: 'Отменён' }
       ]
     }
+  }
+})
+
+export const useUsersStorage = () => useState<UsersStorage>('usersStorage', () => {
+  return {
+    list: [],
+    loading: false
   }
 })
