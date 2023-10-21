@@ -5,7 +5,7 @@ interface Column extends TableColumn {
 }
 const columns: Column[] = [
   {
-    id: 'username',
+    id: 'displayName',
     label: 'Пользователи',
     width: 180,
     type: 'input'
@@ -23,7 +23,7 @@ const columns: Column[] = [
     type: 'input'
   },
   {
-    id: 'rules',
+    id: 'role',
     label: 'Роль',
     minWidth: 120,
     type: 'select'
@@ -36,40 +36,20 @@ const columns: Column[] = [
   }
 ]
 
-interface DataSource {
-  id: string,
-  username: string,
-  email: string,
-  password: string,
-  rules: string
+const source = computed(() => useUsersStorage().value.list)
+const loading = computed(() => useUsersStorage().value.loading)
+usersGet()
+
+const remove = (uid: string) => {
+  userRemove(uid)
 }
-
-let dataSource = ref<DataSource[]>([])
-
-for (let index = 0; index < 100; index++) {
-  dataSource.value.push({
-    id: index.toString(),
-    username: 'a.kundakchan',
-    email: 'kundakchan@yandex.ru',
-    password: '123456',
-    rules: 'Пользователь'
-  })
-}
-
-const loadingTable = ref(true)
-
-onMounted(() => {
-  setTimeout(() => {
-    loadingTable.value = false
-  }, 300)
-})
 </script>
 
 <template>
   <TableBase
     :columns="columns"
-    :data-source="dataSource"
-    :loading="loadingTable"
+    :data-source="source"
+    :loading="loading"
     :class-table="'w-full'"
     :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
     :class-rows="'border-b'"
@@ -90,6 +70,7 @@ onMounted(() => {
           <ButtonBase
             :shape="'circle'"
             :type="'danger'"
+            @click="remove(record['uid'])"
           >
             <IconTrash />
           </ButtonBase>

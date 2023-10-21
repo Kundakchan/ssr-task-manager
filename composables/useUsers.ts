@@ -5,23 +5,22 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider
 } from 'firebase/auth'
-import type { ProfileUpdate } from '~/types/users'
+import type { ProfileUpdate, Role } from '~/types/users'
 
 import { useToast } from "vue-toastification"
 const { success } = useToast()
 
-
-export const userGet = async () => {
-
-}
-export const userSet = async () => {
-
-}
-export const userRemove = async () => {
-
+export const userRemove = async (uid: string) => {
+  await useFetch(`/api/admin/users/${uid}`, { method: 'DELETE' })
+  const { list } = toRefs(useUsersStorage().value)
+  list.value = list.value.filter(user => user.uid !== uid)
 }
 export const usersGet = async () => {
-
+  usersLoadingSet(true)
+  const { list } = toRefs(useUsersStorage().value)
+  const { data } = await useFetch('/api/admin/users')
+  list.value = data.value ? data.value : []
+  usersLoadingSet(false)
 }
 
 export const logInAgain = async (password: string) => {
@@ -55,4 +54,21 @@ export const profileUpdate = async ({ displayName, email, password, oldPassword 
     await updatePassword(user, password)
     success('Пароль обновлён')
   }
+}
+
+const usersLoadingTime = ref<NodeJS.Timeout | null>(null)
+export const usersLoadingSet = (value: boolean, time = 500) => {
+  if (process.server) return
+  if (usersLoadingTime.value) {
+    clearTimeout(usersLoadingTime.value)
+  }
+  usersLoadingTime.value = setTimeout(() => {
+    const { loading } = toRefs(useUsersStorage().value)
+    loading.value = value
+    usersLoadingTime.value = null
+  }, time)
+}
+
+export const setUserRole = async (uid: string, role: Role) => {
+  await useFetch(`/api/admin/users/${uid}`, { method: 'PATCH', body: { role } })
 }
