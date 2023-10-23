@@ -1,4 +1,13 @@
-import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  getIdTokenResult,
+  getIdToken
+} from 'firebase/auth'
 import type { LogIn, Registration } from '~/types/auth'
 
 export const logIn = async ({ email, password }: LogIn) => {
@@ -20,9 +29,21 @@ export const initFirebase = async () => {
   const auth = getAuth()
 
   const cookieUser = useCookie('cookieUser')
-  onAuthStateChanged(auth, async (user) => {
-    cookieUser.value = user ? JSON.stringify(user) : null
-    const firebaseUser = useFirebaseUser()
-    firebaseUser.value = user
+  onAuthStateChanged(auth, async (data) => {
+    const { user, isAdmin } = toRefs(useAuthStorage().value)
+
+    if (!data) {
+      cookieUser.value = null
+      return
+    }
+
+    const token = await getIdToken(data)
+    const { claims } = await getIdTokenResult(data)
+
+    user.value = data
+    isAdmin.value = claims.role === 'admin'
+
+    cookieUser.value = JSON.stringify({ token, uid: data.uid, role: claims.role })
+
   })
 }

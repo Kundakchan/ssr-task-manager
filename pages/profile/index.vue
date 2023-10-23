@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import type { ProfileUpdate } from '~/types/users'
 
-const user = computed(() => useFirebaseUser().value)
+definePageMeta({
+  middleware: "auth"
+})
+
+const user = computed(() => useAuthStorage().value.user)
 const userData = ref<ProfileUpdate>({
   displayName: '',
   email: '',

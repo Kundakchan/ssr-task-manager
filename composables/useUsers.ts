@@ -5,7 +5,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider
 } from 'firebase/auth'
-import type { ProfileUpdate, Role } from '~/types/users'
+import type { ProfileUpdate, Role, User, GetUsersQuery } from '~/types/users'
 
 import { useToast } from "vue-toastification"
 const { success } = useToast()
@@ -15,24 +15,24 @@ export const userRemove = async (uid: string) => {
   const { list } = toRefs(useUsersStorage().value)
   list.value = list.value.filter(user => user.uid !== uid)
 }
-export const usersGet = async () => {
+export const usersGet = async (query: GetUsersQuery) => {
   usersLoadingSet(true)
   const { list } = toRefs(useUsersStorage().value)
-  const { data } = await useFetch('/api/admin/users')
+  const { data } = await useFetch('/api/admin/users', { query: query })
   list.value = data.value ? data.value : []
   usersLoadingSet(false)
 }
 
 export const logInAgain = async (password: string) => {
-  const user = useFirebaseUser().value
-  if (!user?.email) throw createError('Данные пользователя отсутствуют')
+  const { user } = toRefs(useAuthStorage().value)
+  if (!user || !user.value?.email) throw createError('Данные пользователя отсутствуют')
 
   const credential = EmailAuthProvider.credential(
-    user.email,
+    user.value.email,
     password
   )
 
-  return reauthenticateWithCredential(user, credential)
+  return reauthenticateWithCredential(user.value, credential)
 }
 
 export const profileUpdate = async ({ displayName, email, password, oldPassword }: ProfileUpdate) => {
@@ -71,4 +71,15 @@ export const usersLoadingSet = (value: boolean, time = 500) => {
 
 export const setUserRole = async (uid: string, role: Role) => {
   await useFetch(`/api/admin/users/${uid}`, { method: 'PATCH', body: { role } })
+}
+
+export const updateUser = async (user: User) => {
+  await useFetch(`/api/admin/users/${user.uid}`, {
+    method: 'PATCH',
+    body: {
+      displayName: user.displayName,
+      email: user.email,
+      role: user.role
+    }
+  })
 }

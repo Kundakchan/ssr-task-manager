@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { IconHome, IconInfo, IconUsers } from '@/components/icon'
 
+const isAdmin = computed(() => useAuthStorage().value.isAdmin)
+
 const nav = [
   {
     key: 'index',
@@ -25,6 +27,8 @@ const nav = [
   }
 ]
 
+const menu = computed(() => nav.filter(item => isAdmin.value ? item : item.key !== 'users'))
+
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const nav = [
     <nav class="w-full flex justify-center">
       <ul class="flex gap-2">
         <li
-          v-for="(item) in nav"
+          v-for="(item) in menu"
           :key="item.key"
         >
           <ButtonBase

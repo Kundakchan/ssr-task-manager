@@ -16,11 +16,11 @@ const emit = defineEmits<{
   (e: 'mouse-leave-dropdown', value: MouseEvent): void
 }>()
 
-const clickHander = ($event: MouseEvent) => {
+const clickHandler = ($event: MouseEvent) => {
   emit('click-toggler', $event)
 }
 
-const mouseLeaveHander = ($event: MouseEvent) => {
+const mouseLeaveHandler = ($event: MouseEvent) => {
   if (props.visibility) {
     emit('mouse-leave-dropdown', $event)
   }
@@ -35,13 +35,13 @@ const classMapPlacement = {
 <template>
   <div
     class="relative"
-    @mouseleave="mouseLeaveHander"
+    @mouseleave="mouseLeaveHandler"
   >
-    <div @click="clickHander">
+    <div @click="clickHandler">
       <slot />
     </div>
     <div
-      class="absolute transition duration-100 origin-top-right"
+      class="absolute transition duration-100 origin-top-right z-10"
       :class="[
         classMapPlacement[props.placement],
         { 'opacity-100 scale-100': props.visibility, 'opacity-0 scale-0': !props.visibility },

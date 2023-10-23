@@ -14,7 +14,18 @@ export interface User {
   role: Role
 }
 
+interface AttributeRole {
+  value: Role
+  label: string
+}
+export interface GetUsersQuery {
+  search: string
+}
+
 export interface UsersStorage {
   list: User[]
-  loading: boolean
+  loading: boolean,
+  attributes: {
+    roles: AttributeRole[]
+  }
 }
