@@ -1,24 +1,31 @@
 <script lang="ts" setup>
-interface Props {
-  placeholder: string
-}
+import type { Props, Emits } from './inputSearch'
 
-const props = withDefaults(defineProps<Props>(), {
-  placeholder: ''
+defineOptions({
+  inheritAttrs: false
 })
 
+const props = withDefaults(defineProps<Props>(), {})
+const emit = defineEmits<Emits>()
+
+const value = ref(props.modelValue)
+watchEffect(() => {
+  emit('update:modelValue', value.value)
+})
 
 </script>
 
 <template>
   <div class="flex w-full items-center">
     <InputBase
-      :placeholder="props.placeholder"
+      v-bind="$attrs"
+      v-model="value"
       class="h-10"
       :shadow="false"
     />
     <ButtonBase
       type="primary"
+      @click="emit('click')"
     >
       Поиск
       <template #icon>

@@ -1,8 +1,13 @@
-import type { User } from "firebase/auth"
 import type { TaskStorage } from "~/types/tasks"
 import type { UsersStorage } from "~/types/users"
-export const useFirebaseUser = () =>
-  useState<User | null>("userFirebase", () => null)
+import type { AuthStorage } from '~/types/auth'
+
+export const useAuthStorage = () => useState<AuthStorage>('authStorage', () => {
+  return {
+    user: null,
+    isAdmin: false
+  }
+})
 
 export const useTask = () => useState<TaskStorage>('taskStorage', () => {
   return {
@@ -26,6 +31,12 @@ export const useTask = () => useState<TaskStorage>('taskStorage', () => {
 export const useUsersStorage = () => useState<UsersStorage>('usersStorage', () => {
   return {
     list: [],
-    loading: false
+    loading: false,
+    attributes: {
+      roles: [
+        { value: 'user', label: 'Пользователь' },
+        { value: 'admin', label: 'Администратор' }
+      ]
+    }
   }
 })

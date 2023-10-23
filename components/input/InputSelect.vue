@@ -7,11 +7,13 @@ interface Props {
   items: Items[]
   modelValue?: string
   id?: string
+  disabled?: boolean
   mode?: 'select' | 'model'
 }
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   id: '',
+  disabled: false,
   mode: 'model'
 })
 
@@ -53,10 +55,15 @@ const selectedLabel = computed(() => props.items.find(item => item.value === pro
     >
       <button
         :id="props.id"
-        class="flex gap-2 items-center justify-between px-4 py-2 shadow-lg bg-gray-100 w-full text-gray-600 text-left outline-none border border-transparent hover:bg-gray-50 focus:border-blue-600 active:border-blue-600"
+        :disabled="disabled"
+        :class="['button', { 
+          'enabled': !disabled,
+          'disabled': disabled
+        }]"
       >
         <span>{{ selectedLabel }}</span>
         <span
+          v-if="!disabled"
           class="transition duration-100 ease-in-out"
           :class="[{ 'rotate-180': dropdownVisibility }]"
         >
@@ -81,3 +88,22 @@ const selectedLabel = computed(() => props.items.find(item => item.value === pro
     </DropdownBase>
   </div>
 </template>
+
+
+<style scoped>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .button {
+    @apply flex gap-2 items-center justify-between px-4 py-2  w-full text-left outline-none border border-transparent
+  }
+  .disabled {
+    @apply cursor-text select-text
+  }
+  .enabled {
+    @apply shadow-lg bg-gray-100 text-gray-600 hover:bg-gray-50 focus:border-blue-600 active:border-blue-600
+  }
+}
+</style>
