@@ -1,6 +1,28 @@
 <script lang="ts" setup>
+
+import type { Filters, FiltersFields } from "~/types/tasks"
+
 definePageMeta({
   middleware: "auth"
+})
+
+
+watchEffect(() => {
+  const route = useRoute()
+  const fields: FiltersFields[] = ['sortBy', 'status']
+  const query: Filters = {}
+  fields.forEach(field => {
+    if (route.query.hasOwnProperty(field)) {
+      query[field] = route.query[field]?.toString()
+    }
+  })
+  taskSetFilters(query)
+})
+
+watch(() => useTask().value.filters, (filters) => {
+  const route = useRoute()
+  if (!route.name) return
+  navigateTo({ name: route.name, query: { ...route.query, ...filters } })
 })
 </script>
 

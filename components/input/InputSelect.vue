@@ -7,24 +7,33 @@ interface Props {
   items: Items[]
   modelValue?: string
   id?: string
+  disabled?: boolean
+  mode?: 'select' | 'model'
 }
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
-  id: ''
+  id: '',
+  disabled: false,
+  mode: 'model'
 })
 
 interface Emits {
   (e: 'update:modelValue', value: string ): void
+  (e: 'select', value: string): void
 }
 const emit = defineEmits<Emits>()
 
 const dropdownVisibility = ref(false)
-const dropdownTogleHander = () => {
+const dropdownToggleHandler = () => {
   dropdownVisibility.value = !dropdownVisibility.value
 }
 const choose = (value: string) => {
-  emit('update:modelValue', value)
-  dropdownTogleHander()
+  if (props.mode === 'model') {
+    emit('update:modelValue', value)
+  } else if (props.mode === 'select') {
+    emit('select', value)
+  }
+  dropdownToggleHandler()
 }
 
 const selectedLabel = computed(() => props.items.find(item => item.value === props.modelValue)?.label)
@@ -41,15 +50,20 @@ const selectedLabel = computed(() => props.items.find(item => item.value === pro
     <DropdownBase
       :visibility="dropdownVisibility"
       overlay-full
-      @click-toggler="dropdownTogleHander"
-      @mouse-leave-dropdown="dropdownTogleHander"
+      @click-toggler="dropdownToggleHandler"
+      @mouse-leave-dropdown="dropdownToggleHandler"
     >
       <button
         :id="props.id"
-        class="flex gap-2 items-center justify-between px-4 py-2 shadow-lg bg-gray-100 w-full text-gray-600 text-left outline-none border border-transparent hover:bg-gray-50 focus:border-blue-600 active:border-blue-600"
+        :disabled="disabled"
+        :class="['button', { 
+          'enabled': !disabled,
+          'disabled': disabled
+        }]"
       >
         <span>{{ selectedLabel }}</span>
         <span
+          v-if="!disabled"
           class="transition duration-100 ease-in-out"
           :class="[{ 'rotate-180': dropdownVisibility }]"
         >
@@ -74,3 +88,22 @@ const selectedLabel = computed(() => props.items.find(item => item.value === pro
     </DropdownBase>
   </div>
 </template>
+
+
+<style scoped>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .button {
+    @apply flex gap-2 items-center justify-between px-4 py-2  w-full text-left outline-none border border-transparent
+  }
+  .disabled {
+    @apply cursor-text select-text
+  }
+  .enabled {
+    @apply shadow-lg bg-gray-100 text-gray-600 hover:bg-gray-50 focus:border-blue-600 active:border-blue-600
+  }
+}
+</style>

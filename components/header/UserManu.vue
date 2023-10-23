@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const dropdownVisibility = ref(false)
-const dropdownTogleHander = () => {
+const dropdownToggleHandler = () => {
   dropdownVisibility.value = !dropdownVisibility.value
 }
 
@@ -28,8 +28,8 @@ const navMenu = [
   <DropdownBase
     :visibility="dropdownVisibility"
     :placement="'right'"
-    @click-toggler="dropdownTogleHander"
-    @mouse-leave-dropdown="dropdownTogleHander"
+    @click-toggler="dropdownToggleHandler"
+    @mouse-leave-dropdown="dropdownToggleHandler"
   >
     <ButtonBase
       type="primary"

@@ -1,40 +1,49 @@
-import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  getIdTokenResult,
+  getIdToken
+} from 'firebase/auth'
 import type { LogIn, Registration } from '~/types/auth'
 
 export const logIn = async ({ email, password }: LogIn) => {
   const auth = getAuth()
-  try {
-    await signInWithEmailAndPassword(auth, email, password)
-  } catch (error) {
-    throw error
-  }
+  await signInWithEmailAndPassword(auth, email, password)
 }
 export const registration = async ({ userName, email, password }: Registration) => {
   const auth = getAuth()
-  try {
-    await createUserWithEmailAndPassword(auth, email, password)
-    if (auth?.currentUser) {
-      await updateProfile(auth.currentUser, { displayName: userName })
-    }
-  } catch (error) {
-    throw error
-  }
+  await createUserWithEmailAndPassword(auth, email, password)
+  if (!auth?.currentUser) throw createError('Данные пользователя отсутствуют')
+  await updateProfile(auth.currentUser, { displayName: userName })
+  await setUserRole(auth.currentUser.uid, 'user')
 }
 export const logOut = async () => {
   const auth = getAuth()
-  try {
-    signOut(auth)
-  } catch (error) {
-    throw error
-  }
+  signOut(auth)
 }
 export const initFirebase = async () => {
   const auth = getAuth()
 
   const cookieUser = useCookie('cookieUser')
-  onAuthStateChanged(auth, async (user) => {
-    cookieUser.value = user ? JSON.stringify(user) : null
-    const firebaseUser = useFirebaseUser()
-    firebaseUser.value = user
+  onAuthStateChanged(auth, async (data) => {
+    const { user, isAdmin } = toRefs(useAuthStorage().value)
+
+    if (!data) {
+      cookieUser.value = null
+      return
+    }
+
+    const token = await getIdToken(data)
+    const { claims } = await getIdTokenResult(data)
+
+    user.value = data
+    isAdmin.value = claims.role === 'admin'
+
+    cookieUser.value = JSON.stringify({ token, uid: data.uid, role: claims.role })
+
   })
 }

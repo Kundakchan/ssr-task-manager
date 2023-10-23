@@ -1,24 +1,9 @@
 <script lang="ts" setup>
-
-interface Props {
-  mode?: 'edit' | 'created'
-  visibility: boolean
-  record?: {
-    id?: string,
-    name?: string,
-    description?: string,
-    status: 'new' | 'proccesing' | 'succsess' | 'cancel'
-  }
-}
+import type { Props, Emits } from './ModalTaskEdit'
 const props = withDefaults(defineProps<Props>(), {
-  mode: 'created',
-  record: () => ({ id: '', description: '', name: '', status: 'new' })
+  mode: 'created'
 })
 
-interface Emits {
-  (e: 'update:visibility', value: boolean): void
-  (e: 'close', value: void): void
-}
 const emit = defineEmits<Emits>()
 
 const close = () => {
@@ -28,11 +13,11 @@ const close = () => {
 }
 const { attributes } = toRefs(useTask().value)
 
-const task = ref({...props.record})
+const task = ref({...props.source})
 
-watch(() => props.record, (record) => {
+watch(() => props.source, (record) => {
   task.value = { ...record }
-})
+}, { deep: true })
 
 const submit = () => {
   if (props.mode === 'created') {
@@ -53,17 +38,19 @@ const submit = () => {
   close()
 }
 
+const title = computed(() => props.mode === 'created' ? 'Создания задачи' : 'Редактирования задачи')
+
 
 </script>
 
 <template>
   <ModalBase
     :visibility="visibility"
-    :title="'Создания задачи'"
-    :applay-title="'Создать'"
+    :title="title"
+    :apply-title="'Создать'"
     @close="close"
     @cancel="close"
-    @applay="submit"
+    @apply="submit"
   >
     <form
       class="flex flex-wrap items-end p-3"

@@ -17,7 +17,10 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxt/test-utils": "^3.7.3",
+    "@nuxtjs/device": "^3.1.1",
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@types/body-scroll-lock": "^3.1.1",
+    "@types/lodash": "^4.14.200",
     "@types/node": "^18.17.3",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
@@ -37,7 +40,11 @@
     "vitest": "^0.34.4"
   },
   "dependencies": {
+    "body-scroll-lock": "^4.0.0-beta.0",
     "dayjs": "^1.11.10",
-    "firebase": "^10.4.0"
+    "firebase": "^10.4.0",
+    "firebase-admin": "^11.11.0",
+    "lodash": "^4.17.21",
+    "vue-toastification": "^2.0.0-rc.5"
   }
 }

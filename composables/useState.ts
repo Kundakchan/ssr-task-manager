@@ -1,25 +1,42 @@
-import type { User } from "firebase/auth"
 import type { TaskStorage } from "~/types/tasks"
-export const useFirebaseUser = () =>
-  useState<User | null>("userFirebase", () => null)
+import type { UsersStorage } from "~/types/users"
+import type { AuthStorage } from '~/types/auth'
+
+export const useAuthStorage = () => useState<AuthStorage>('authStorage', () => {
+  return {
+    user: null,
+    isAdmin: false
+  }
+})
 
 export const useTask = () => useState<TaskStorage>('taskStorage', () => {
   return {
     list: [],
     loading: true,
+    filters: {
+      sortBy: 'created:asc',
+      status: 'all'
+    },
     attributes: {
       statuses: [
         { value: 'new', label: 'Новый' },
-        { value: 'proccesing', label: 'В процессе' },
-        { value: 'succsess', label: 'Выполнин' },
+        { value: 'processing', label: 'В процессе' },
+        { value: 'success', label: 'Выполнена' },
         { value: 'cancel', label: 'Отменён' }
-      ],
-      statusLabel: {
-        new: 'Новый',
-        proccesing: 'В процессе',
-        succsess: 'Выполнин',
-        cancel: 'Отменён'
-      }
+      ]
+    }
+  }
+})
+
+export const useUsersStorage = () => useState<UsersStorage>('usersStorage', () => {
+  return {
+    list: [],
+    loading: false,
+    attributes: {
+      roles: [
+        { value: 'user', label: 'Пользователь' },
+        { value: 'admin', label: 'Администратор' }
+      ]
     }
   }
 })

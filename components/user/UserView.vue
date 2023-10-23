@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+import { isEqual } from 'lodash'
 import type { TableColumn } from '../table/Table'
+import type { User } from '~/types/users'
 interface Column extends TableColumn {
   type: 'input' | 'select' | 'action'
 }
 const columns: Column[] = [
   {
-    id: 'username',
+    id: 'displayName',
     label: 'Пользователи',
     width: 180,
     type: 'input'
@@ -23,7 +25,7 @@ const columns: Column[] = [
     type: 'input'
   },
   {
-    id: 'rules',
+    id: 'role',
     label: 'Роль',
     minWidth: 120,
     type: 'select'
@@ -36,40 +38,35 @@ const columns: Column[] = [
   }
 ]
 
-interface DataSource {
-  id: string,
-  username: string,
-  email: string,
-  password: string,
-  rules: string
+const source = computed(() => useUsersStorage().value.list)
+const loading = computed(() => useUsersStorage().value.loading)
+usersGet()
+
+const remove = (uid: string) => {
+  userRemove(uid)
 }
 
-let dataSource = ref<DataSource[]>([])
+const roles = computed(() => useUsersStorage().value.attributes.roles)
 
-for (let index = 0; index < 100; index++) {
-  dataSource.value.push({
-    id: index.toString(),
-    username: 'a.kundakchan',
-    email: 'kundakchan@yandex.ru',
-    password: '123456',
-    rules: 'Пользователь'
-  })
+const editRecord = ref<{ [key: string]: User }>({})
+const selectedForEditing = computed(() => editRecord.value)
+const setEditingMode = (record: User) => {
+  editRecord.value[record.uid] = structuredClone({ ...record })
 }
+const removeEditingMode = async (record: User) => {
+  if (!isEqual({...editRecord.value[record.uid]}, {...record})) {
+    await updateUser(record)
+  }
 
-const loadingTable = ref(true)
-
-onMounted(() => {
-  setTimeout(() => {
-    loadingTable.value = false
-  }, 300)
-})
+  delete editRecord.value[record.uid]
+}
 </script>
 
 <template>
   <TableBase
     :columns="columns"
-    :data-source="dataSource"
-    :loading="loadingTable"
+    :data-source="source"
+    :loading="loading"
     :class-table="'w-full'"
     :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
     :class-rows="'border-b'"
@@ -82,26 +79,45 @@ onMounted(() => {
       <template v-if="column.type === 'action'">
         <div class="py-1 px-4 flex gap-2">
           <ButtonBase
+            v-if="selectedForEditing[record.uid]"
+            :shape="'circle'"
+            :type="'success'"
+            @click="removeEditingMode(record)"
+          >
+            <IconCheck />
+          </ButtonBase>
+          <ButtonBase
+            v-else
             :shape="'circle'"
             :type="'primary'"
+            @click="setEditingMode(record)"
           >
             <IconPencil />
           </ButtonBase>
           <ButtonBase
             :shape="'circle'"
             :type="'danger'"
+            @click="remove(record['uid'])"
           >
             <IconTrash />
           </ButtonBase>
         </div>
       </template>
       <template v-else-if="column.type === 'select'">
-        <div class="px-4">
-          <span class=" text-sm bg-blue-600 text-white py-1 px-2 rounded shadow-lg">{{ record[field.id] }}</span>
+        <div class=" w-48">
+          <InputSelect
+            v-model="record[field.id]"
+            :items="roles"
+            :disabled="!selectedForEditing[record.uid]"
+          />
         </div>
       </template>
       <template v-else>
-        <InputBase :placeholder="record[field.id]" />
+        <InputBase
+          v-model="record[field.id]"
+          :class="['h-10', { 'input-disabled-user-input': !selectedForEditing[record.uid] }]"
+          :disabled="!selectedForEditing[record.uid]"
+        />
       </template>
     </template>
 
@@ -109,7 +125,7 @@ onMounted(() => {
       <table class="w-full">
         <tbody>
           <tr 
-            v-for="index in 10"
+            v-for="index in source.length"
             :key="index"
             class="border-b"
           >
@@ -130,21 +146,13 @@ onMounted(() => {
         <span class=" text-lg text-gray-400">Нет данных</span>
       </div>
     </template>
-    <template #footer>
-      <div class="w-full flex justify-center px-4 py-6">
-        <ButtonBase :type="'primary'">
-          Prev
-        </ButtonBase>
-        <ButtonBase :type="'primary'">
-          1
-        </ButtonBase>
-        <ButtonBase :type="'primary'">
-          2
-        </ButtonBase>
-        <ButtonBase :type="'primary'">
-          Next
-        </ButtonBase>
-      </div>
-    </template>
   </TableBase>
 </template>
+
+<style>
+.input-disabled-user-input:disabled {
+  border-color: transparent;
+  background: transparent;
+  cursor: text;
+}
+</style>

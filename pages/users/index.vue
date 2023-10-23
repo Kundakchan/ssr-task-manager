@@ -1,4 +1,13 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+definePageMeta({
+  middleware: ["auth", "admin"]
+})
+
+const search = ref('')
+const searchHandler = () => {
+  usersGet({ search: search.value })
+}
+</script>
 
 <template>
   <section class="px-6 sm:py-6">
@@ -9,8 +18,10 @@
     </div>
     <div class="w-full mt-4 sm:mt-6 flex justify-center">
       <InputSearch
+        v-model="search"
         class="max-w-screen-lg"
         placeholder="Имя пользователя или Email"
+        @click="searchHandler"
       />
     </div>
     <div class="w-full mt-4 sm:mt-6">

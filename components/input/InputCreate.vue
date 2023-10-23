@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import type { Source } from '../modal/ModalTaskEdit'
 const modal = ref(false)
-const record = ref({
+const source = ref<Source>({
   name: '',
   status: 'new'
 })
@@ -10,8 +11,8 @@ const modalToggle = () => {
 }
 
 const clearInput = () => {
-  record.value.name = ''
-  record.value.status = 'new'
+  source.value.name = ''
+  source.value.status = 'new'
 }
 
 </script>
@@ -19,13 +20,13 @@ const clearInput = () => {
 <template>
   <div class="flex w-full items-center">
     <InputBase
-      v-model="record.name"
+      v-model="source.name"
       placeholder="Наименования задачи"
       class="h-10"
       :shadow="false"
     />
     <ButtonBase
-      :disabled="!record.name"
+      :disabled="!source.name"
       type="primary"
       @click="modalToggle"
     >
@@ -39,7 +40,7 @@ const clearInput = () => {
       <Teleport to="#space-modal">
         <ModalTaskEdit
           v-model:visibility="modal"
-          :record="record"
+          :source="source"
           @close="clearInput"
         />
       </Teleport>
