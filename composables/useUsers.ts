@@ -15,7 +15,7 @@ export const userRemove = async (uid: string) => {
   const { list } = toRefs(useUsersStorage().value)
   list.value = list.value.filter(user => user.uid !== uid)
 }
-export const usersGet = async (query: GetUsersQuery) => {
+export const usersGet = async (query?: GetUsersQuery) => {
   usersLoadingSet(true)
   const { list } = toRefs(useUsersStorage().value)
   const { data } = await useFetch('/api/admin/users', { query: query })
