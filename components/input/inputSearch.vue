@@ -1,10 +1,6 @@
 <script lang="ts" setup>
 import type { Props, Emits } from './inputSearch'
 
-defineOptions({
-  inheritAttrs: false
-})
-
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits<Emits>()
 
@@ -18,9 +14,9 @@ watchEffect(() => {
 <template>
   <div class="flex w-full items-center">
     <InputBase
-      v-bind="$attrs"
       v-model="value"
       class="h-10"
+      placeholder="Имя пользователя или Email"
       :shadow="false"
     />
     <ButtonBase
