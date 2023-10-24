@@ -31,7 +31,7 @@ export default defineNuxtConfig({
       token_uri: process.env.FIREBASE_ADMIN_TOKEN_URL,
       auth_provider_x509_cert_url: process.env.FIREBASE_ADMIN_AUTH_PROVIDER_X509_CERT_URL,
       client_x509_cert_url: process.env.FIREBASE_ADMIN_CLIENT_X509_CERT_URL,
-      universe_domai: process.env.FIREBASE_ADMIN_UNIVERSE_DOMAIN
+      universe_domain: process.env.FIREBASE_ADMIN_UNIVERSE_DOMAIN
     }
   },
 
