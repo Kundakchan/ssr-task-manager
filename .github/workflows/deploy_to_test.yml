@@ -15,7 +15,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --prefer-offline
       - name: Print vars
-        run: print ${{ toJSON(vars) }}
+        run: echo ${{ toJSON(vars) }}
       - name: Creating .env
         run: |
           json_data='${{ toJSON(vars) }}'
