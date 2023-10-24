@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import type { TableColumn } from '../table/Table'
 import type { User } from '~/types/users'
 interface Column extends TableColumn {
