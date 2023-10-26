@@ -11,6 +11,7 @@ export interface User {
   uid: string
   displayName: string
   email: string
+  password: string
   role: Role
 }
 

@@ -4,23 +4,27 @@ import type { TableColumn } from '../table/Table'
 import type { User } from '~/types/users'
 interface Column extends TableColumn {
   type: 'input' | 'select' | 'action'
+  placeholder?: string
 }
 const columns: Column[] = [
   {
     id: 'displayName',
     label: 'Пользователи',
+    placeholder: 'Имя пользователя',
     width: 180,
     type: 'input'
   },
   {
     id: 'email',
     label: 'Email',
+    placeholder: 'Укажите email',
     width: 180,
     type: 'input'
   },
   {
     id: 'password',
     label: 'Пароль',
+    placeholder: 'Новый пароль',
     width: 180,
     type: 'input'
   },
@@ -68,8 +72,12 @@ const removeEditingMode = async (record: User) => {
     :data-source="source"
     :loading="loading"
     :class-table="'w-full'"
+    :class-header="'hidden md:table-header-group'"
     :class-header-cell="'text-left bg-gray-100 p-4 border-r last:border-r-0'"
-    :class-rows="'border-b'"
+    :class-rows="'md:border-b md:table-row md:shadow-none md:rounded-none md:py-0 py-6 grid gap-2 border rounded-lg shadow-lg'"
+    :class-colgroup="'md:table-column-group hidden'"
+    :class-body="'md:table-row-group grid sm:grid-cols-2 gap-4'"
+    :class-cell="'md:table-cell grid'"
   >
     <template
       v-for="(column) in columns"
@@ -104,6 +112,7 @@ const removeEditingMode = async (record: User) => {
         </div>
       </template>
       <template v-else-if="column.type === 'select'">
+        <span class="md:hidden px-4 text-gray-400 text-sm">{{ column.label }}</span>
         <div class=" w-48">
           <InputSelect
             v-model="record[field.id]"
@@ -113,9 +122,11 @@ const removeEditingMode = async (record: User) => {
         </div>
       </template>
       <template v-else>
+        <span class="md:hidden px-4 text-gray-400 text-sm">{{ column.label }}</span>
         <InputBase
           v-model="record[field.id]"
-          :class="['h-10', { 'input-disabled-user-input': !selectedForEditing[record.uid] }]"
+          :placeholder="column.placeholder"
+          :class="['h-10 px-4', { 'input-disabled-user-input': !selectedForEditing[record.uid] }]"
           :disabled="!selectedForEditing[record.uid]"
         />
       </template>
