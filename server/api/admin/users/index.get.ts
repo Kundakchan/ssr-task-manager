@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
       return <User>{
         uid: user.uid,
         email: user.email,
+        password: '',
         displayName: user.displayName,
         role: user.customClaims?.role
       }

@@ -72,12 +72,17 @@ export const setUserRole = async (uid: string, role: Role) => {
 }
 
 export const updateUser = async (user: User) => {
-  await useFetch(`/api/admin/users/${user.uid}`, {
+  const { error } = await useFetch(`/api/admin/users/${user.uid}`, {
     method: 'PATCH',
     body: {
       displayName: user.displayName,
       email: user.email,
+      password: user.password,
       role: user.role
     }
   })
+
+  if (error.value) {
+    throw createError(error.value.data)
+  }
 }
