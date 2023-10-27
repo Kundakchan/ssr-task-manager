@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
   const array = Object.keys(mapHandler) as [IndexHandler]
   const promiseAll: Promise<void>[] = []
   array.forEach(async (handler) => {
-    if (body.hasOwnProperty(handler)) {
+    if (body.hasOwnProperty(handler) && body[handler]) {
       promiseAll.push(mapHandler[handler](body[handler], user))
     }
   })
