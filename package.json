@@ -34,7 +34,6 @@
     "jsdom": "^22.1.0",
     "lint-staged": "^14.0.1",
     "nuxt": "^3.6.5",
-    "sass": "^1.65.1",
     "typescript": "^5.2.2",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^0.34.4"

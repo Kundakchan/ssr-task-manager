@@ -20,7 +20,6 @@ const searchHandler = () => {
       <InputSearch
         v-model="search"
         class="max-w-screen-lg"
-        placeholder="Имя пользователя или Email"
         @click="searchHandler"
       />
     </div>

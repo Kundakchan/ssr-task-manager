@@ -7,15 +7,12 @@ import {
 } from 'firebase/auth'
 import type { ProfileUpdate, Role, User, GetUsersQuery } from '~/types/users'
 
-import { useToast } from "vue-toastification"
-const { success } = useToast()
-
 export const userRemove = async (uid: string) => {
   await useFetch(`/api/admin/users/${uid}`, { method: 'DELETE' })
   const { list } = toRefs(useUsersStorage().value)
   list.value = list.value.filter(user => user.uid !== uid)
 }
-export const usersGet = async (query: GetUsersQuery) => {
+export const usersGet = async (query?: GetUsersQuery) => {
   usersLoadingSet(true)
   const { list } = toRefs(useUsersStorage().value)
   const { data } = await useFetch('/api/admin/users', { query: query })
@@ -36,23 +33,24 @@ export const logInAgain = async (password: string) => {
 }
 
 export const profileUpdate = async ({ displayName, email, password, oldPassword }: ProfileUpdate) => {
+  const { $notification } = useNuxtApp()
   const UserCredential = await logInAgain(oldPassword)
   const user = UserCredential?.user
   if (!user) throw createError('Данные пользователя отсутствуют')
 
   if (displayName !== user?.displayName) {
     await updateProfile(user, { displayName })
-    success('Имя пользователя обновлено')
+    $notification.success('Имя пользователя обновлено')
   }
 
   if (email !== user?.email) {
     await updateEmail(user, email)
-    success('Почта обновлена')
+    $notification.success('Почта обновлена')
   }
 
   if (password) {
     await updatePassword(user, password)
-    success('Пароль обновлён')
+    $notification.success('Пароль обновлён')
   }
 }
 
@@ -74,12 +72,17 @@ export const setUserRole = async (uid: string, role: Role) => {
 }
 
 export const updateUser = async (user: User) => {
-  await useFetch(`/api/admin/users/${user.uid}`, {
+  const { error } = await useFetch(`/api/admin/users/${user.uid}`, {
     method: 'PATCH',
     body: {
       displayName: user.displayName,
       email: user.email,
+      password: user.password,
       role: user.role
     }
   })
+
+  if (error.value) {
+    throw createError(error.value.data)
+  }
 }
